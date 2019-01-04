@@ -5,3 +5,4 @@ commands/voteMute.js
 commands/xp.js
 .gitignore
 config.js
+/node_modules

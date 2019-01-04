@@ -14,7 +14,7 @@ let attach = {
 
     let regexMsg = joinedMsg.match(/(?:(?:<)?(?:https?:\/\/)?(?:www\.)?trello.com\/c\/)?([^\/|\s|\>]+)(?:\/|\>)?(?:[\w-\d]*)?(?:\/|\>|\/>)?\s*\|?\s*([\s\S]*)/i);
     if(!regexMsg || !regexMsg[1]) {
-      utils.botReply(bot, userID, channelID, "please include a report number or trello url, and an attachment.", command, msg.id, false);
+      utils.botReply(bot, userID, channelID, "укажите номер отчета или url-адрес trello, а также вложение.", command, msg.id, false);
       return;
     }
 
@@ -28,7 +28,7 @@ let attach = {
       let checkForYT = attachment.match(/^((?:https?:)?\/\/)?((?:www|m)\.)?((?:youtube\.com|youtu.be))(\/(?:[\w\-]+\?v=|embed\/|v\/)?)([\w\-]+)(\S+)?$/i);
       let checkForImage = attachment.match(/\bhttps?:\/\/\S+(?:png|jpg|jpeg|webp|gifv?)\b/i);
       if(!checkForImage && !checkForYT) {
-        utils.botReply(bot, userID, channelID, "please include a valid attachment.", command, msg.id, false);
+        utils.botReply(bot, userID, channelID, "пожалуйста, включите действительное приложение.", command, msg.id, false);
         return;
       }
       removeMsg = true;
@@ -36,33 +36,33 @@ let attach = {
       attachment = msg.attachments[0].url;
       removeMsg = false;
     } else {
-      utils.botReply(bot, userID, channelID, "please include a attachment", command, msg.id, false);
+      utils.botReply(bot, userID, channelID, "пожалуйста, включите приложение", command, msg.id, false);
       return;
     }
 
     trello.get("/1/cards/" + key, {}, function(errorURL, urlData) {
       if(!!urlData && !!urlData.id) {
         attachUtils(bot, channelID, userTag, userID, command, msg, trello, key, attachment, removeMsg, urlData.name);
-        utils.botReply(bot, userID, channelID, "your attachment has been added.", command, msg.id, true);
+        utils.botReply(bot, userID, channelID, "ваше вложение было добавлено.", command, msg.id, true);
       } else {
         db.get("SELECT trelloURL, reportStatus, reportMsgID, header FROM reports WHERE id = ?", [key], function(error, report) {
           if(!report){
-            utils.botReply(bot, userID, channelID, "please include a report number or trello url.", command, msg.id, false);
+            utils.botReply(bot, userID, channelID, "укажите номер отчета или url-адрес trello.", command, msg.id, false);
             return;
           }
 
           if(report.reportStatus === "closed") {
-            utils.botReply(bot, userID, channelID, "this report has already been denied.", command, msg.id, false);
+            utils.botReply(bot, userID, channelID, "этот отчет уже отклонен.", command, msg.id, false);
             return;
           } else if(report.reportStatus === "trello") {
             attachUtils(bot, channelID, userTag, userID, command, msg, trello, report.trelloURL, attachment, removeMsg, report.header, report.reportMsgID);
-            utils.botReply(bot, userID, channelID, "your attachment has been added.", command, msg.id, true);
+            utils.botReply(bot, userID, channelID, "ваше вложение было добавлено.", command, msg.id, true);
           } else {
             bot.getMessage(config.channels.queueChannel, report.reportMsgID).then((msgContent) => {
               let newMsg = msgContent.content + "\n:paperclip: **" + utils.cleanUserTag(userTag) + "**: " + attachment;
               db.run("INSERT INTO reportAttachments (id, userID, userTag, attachment) VALUES (?, ?, ?, ?)", [key, userID, userTag, attachment], function() {
                 bot.editMessage(config.channels.queueChannel, report.reportMsgID, newMsg).catch((err) => {console.log("editInAttachment\n" + err);});
-                utils.botReply(bot, userID, channelID, "your attachment has been added.", command, msg.id, true);
+                utils.botReply(bot, userID, channelID, "ваше вложение было добавлено.", command, msg.id, true);
                 bot.createMessage(config.channels.modLogChannel, ":paperclip: **" + utils.cleanUserTag(userTag) + "**: `" + report.header + "` **#" + key + "**");
               });
             }).catch(error => {console.log("Attach DB GetMSG\n" + error);});

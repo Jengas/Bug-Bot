@@ -30,7 +30,7 @@ let approveDeny = {
     let contentMessage = recievedMessage.match(/(\d*)\s*\|\s*([\s\S]*)/i);
 
     if(!contentMessage) {
-      utils.botReply(bot, userID, channelID, "please format your input correctly. `" + command + " <report ID> | system info`. See <#342060723721207810> for full syntax.", command, msg.id, false);
+      utils.botReply(bot, userID, channelID, "пожалуйста, правильно отформатируйте ввод. `" + command + " <report ID> | информация`. См. <#530693874037817345> для полного синтаксиса.", command, msg.id, false);
       return;
     }
 
@@ -42,15 +42,15 @@ let approveDeny = {
       }
 
       if(!reportInfo) { // check if report exists
-        utils.botReply(bot, userID, channelID, "I can't find that report ID. Make sure you use a valid report ID.", command, msg.id, false);
+        utils.botReply(bot, userID, channelID, "Я не могу найти идентификатор отчета. Убедитесь, что используется допустимый идентификатор отчета.", command, msg.id, false);
         return;
       }
       if(command.toLowerCase() === "!approve" && reportInfo.userID === userID) { // check if user is trying to approve their own report
-        utils.botReply(bot, userID, channelID, "you can't approve your own report.", command, msg.id, false);
+        utils.botReply(bot, userID, channelID, "вы не можете утвердить свой собственный отчет.", command, msg.id, false);
         return;
       }
       if(reportInfo.reportStatus !== "queue") { // check if the report is in the queue, closed or sent to trello
-        utils.botReply(bot, userID, channelID, "this report has already been moved.", command, msg.id, false);
+        utils.botReply(bot, userID, channelID, "этот отчет уже перемещен.", command, msg.id, false);
         return;
       }
 
@@ -59,7 +59,7 @@ let approveDeny = {
       let ADcontent = cleanContent;
       //Check if ADcontent exists or not, reply "missing reason/user settings" if it's missing
       if(!cleanContent) {
-        utils.botReply(bot, userID, channelID, "you're missing a reason or system settings. Refer to <#342060723721207810> for more info.", command, msg.id, false);
+        utils.botReply(bot, userID, channelID, "отсутствует причина. См <#530693874037817345> для дополнительной информации.", command, msg.id, false);
         return;
       } else if(!!whichClient) {
         whichClient[1] = whichClient[1].toLowerCase();

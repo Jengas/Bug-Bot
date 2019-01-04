@@ -6,7 +6,7 @@
   "repository": "https://github.com/SamEm/Bug-Bot",
   "author": "Logiz",
   "scripts": {
-    "start": "forever appStart.json"
+    "start": "nodemon bugbot.js"
   },
   "dependencies": {
     "chalk": "^1.1.3",

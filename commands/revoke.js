@@ -9,7 +9,7 @@ let revoke = {
         splitMsg.shift();
 
     if(!splitMsg || !splitMsg[0]) {
-      utils.botReply(bot, userID, channelID, "you seem to have dropped your key, mind picking it up and giving it to me?", command, msg.id);
+      utils.botReply(bot, userID, channelID, "вы, кажется, уронили свой ключ, не забудьте забрать его и дать мне?", command, msg.id);
       return;
     }
     let key = splitMsg[0];
@@ -18,17 +18,17 @@ let revoke = {
       if(!reportInfo) {
         //can't find report
         //reply
-        utils.botReply(bot, userID, channelID, "I can't find that report, did you use the right key?", command, msg.id);
+        utils.botReply(bot, userID, channelID, "Я не могу найти отчет, вы использовали правильный ключ?", command, msg.id);
         return;
       } else if(!!reportInfo && reportInfo.reportStatus !== "queue") {
         //report has been moved or closed
         //reply
-        utils.botReply(bot, userID, channelID, "the report has already been moved or closed.", command, msg.id);
+        utils.botReply(bot, userID, channelID, "отчет уже перемещен или закрыт.", command, msg.id);
         return;
       }
 
       bot.getMessage(config.channels.queueChannel, reportInfo.reportMsgID).then((reportMsg) => {
-        let oldReport = reportMsg.content.split("Report ID: **" + key + "**");
+        let oldReport = reportMsg.content.split("ID отчета: **" + key + "**");
         let split = oldReport[1];
         let pattern = "\\\n(\\<\\:greenTick\\:" + config.emotes.greenTick + "\\>|\\<\\:redTick\\:" + config.emotes.redTick + "\\>)\\s(\\*\\*" + utils.cleanUserTagRegex(userTag) + "\\*\\*):?\\s(.*)";
         let newRegex = new RegExp(pattern, "i");
@@ -51,14 +51,14 @@ let revoke = {
         //remove from reportQueueInfo and chat message
         //update reports with new can/trepro
         let replace = split.replace(newRegex, "");
-        let newMsg = oldReport[0] + "Report ID: **" + key + "**" + replace;
+        let newMsg = oldReport[0] + "ID отчета: **" + key + "**" + replace;
         db.run("DELETE FROM reportQueueInfo WHERE userID = ? AND id = ?", [userID, key], function(err, reply) {
           if(!!err) {
             console.log(err);
           }
           bot.editMessage(config.channels.queueChannel, reportInfo.reportMsgID, newMsg).then(() => {
-            utils.botReply(bot, userID, channelID, "you have successfully removed your input on **#" + key + "**.", command, msg.id);
-            bot.createMessage(config.channels.modLogChannel, ":wastebasket: **" + utils.cleanUserTag(userTag) + "** removed their input on **#" + key + "**");
+            utils.botReply(bot, userID, channelID, "вы успешно удалили свой вклад в **#" + key + "**.", command, msg.id);
+            bot.createMessage(config.channels.modLogChannel, ":wastebasket: **" + utils.cleanUserTag(userTag) + "** удален их ввод на **#" + key + "**");
           }).catch(err => {console.log("edit out - revoke\n" + err);});
         });
 

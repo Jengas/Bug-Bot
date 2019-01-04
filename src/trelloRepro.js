@@ -21,9 +21,9 @@ function addReproToTrello(bot, userID, userTag, db, trello, reportKey, channelID
       }
 
       if(!!command && reproCount <= customConfig.reproAttempts) {
-        utils.botReply(bot, userID, channelID, "your reproduction has been added to the ticket.", command, msgID, false);
+        utils.botReply(bot, userID, channelID, "ваша репродукция добавлена в тикет.", command, msgID, false);
       } else if(!!command) {
-        utils.botReply(bot, userID, channelID, "your repro has been successfully added to the Trello Ticket! We cap the number of can/notRepro's shown here at " + customConfig.reproAttempts + ", but your info is safe and sound in Trello!", command, msgID, false);
+        utils.botReply(bot, userID, channelID, "ваш repro успешно добавлен в Trello Ticket! Мы ограничим число может/не Repro показано здесь " + customConfig.reproAttempts + ", но ваша информация в целости и сохранности в Trello!", command, msgID, false);
       }
 
       bot.createMessage(config.channels.modLogChannel, emoji + " **" + utils.cleanUserTag(userTag) + "** " + reproduction + " `" + info.data.card.name + "` <http://trello.com/c/" + info.data.card.shortLink + ">");

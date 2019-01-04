@@ -16,11 +16,9 @@ function addReportTrello(bot, key, db, trello) { // add report to trello
       stepsToRepro = stepsToRepro.replace(/(-)\s/gi, '\n$&');
       let expectedResult = allSections["expected result"];
       let actualResult = allSections["actual result"];
-      let clientSetting = allSections["client setting"];
-      let sysSettings = allSections["system setting"];
 
-      const reportString = '\n\n####Steps to reproduce:' + stepsToRepro + '\n\n####Expected result:\n' + expectedResult + '\n####Actual result:\n' + actualResult + '\n####Client settings:\n' + clientSetting + '\n####System settings:\n' + sysSettings;
-      const reportChatString = "\n**Short description:** " + report.header + "\n**Steps to reproduce:** " + stepsToRepro + "\n**Expected result:** " + expectedResult + "\n**Actual result:** " + actualResult + "\n**Client settings:** " + clientSetting + "\n**System settings:** " + sysSettings;
+      const reportString = '\n\n####Шаги для повторения:' + stepsToRepro + '\n\n####Ожидаемый релузьтат:\n' + expectedResult + '\n####Реальный результат:\n' + actualResult;
+      const reportChatString = "\n**Short description:** " + report.header + "\n**Шаги для повторения:** " + stepsToRepro + "\n**Ожидаемый релузьтат:** " + expectedResult + "\n**Реальный результат:** " + actualResult;
 
       let success = function(successError, data) {
         bot.deleteMessage(config.channels.queueChannel, report.reportMsgID).catch(() => {});
@@ -66,7 +64,7 @@ function addReportTrello(bot, key, db, trello) { // add report to trello
 
       let newReport = {
         name: report.header,
-        desc: "Reported by " + report.userTag + reportString + "\n\n" + key,
+        desc: "Отчёт от " + report.userTag + reportString + "\n\n" + key,
         idList: report.cardID,
         pos: 'top'
       }
@@ -90,14 +88,14 @@ function getUserInfo(userID, userTag, postChannelID, shortUrl, key, bot) {
       bot.editGuildMember(config.DTserverID, userID, {
         roles: allRoles
       }).then(() => {
-        utils.botReply(bot, userID, config.channels.charterChannel, ", congratulations on your bug getting approved! You're almost a full-fledged Bug Hunter:tm:!  The last step is you need to read and agree to the rules of this Charter by DM'ing the Secret Phrase to me.  The secret phrase can only be found by reading the Charter!", null, null, false, true);
-        bot.createMessage(config.channels.modLogChannel, `**${userTag}** was given the Initiate role because of ${shortUrl}`);
+        utils.botReply(bot, userID, config.channels.charterChannel, ", поздравляем с получением одобрения вашей ошибки! Ты практически полноценный Охотник за багами!  Последний шаг - вам нужно прочитать и согласиться с правилами этого устава, передав мне секретную фразу.  Секретную фразу можно найти только прочитав Устав!", null, null, false, true);
+        bot.createMessage(config.channels.modLogChannel, `**${userTag}** была дана роль Инициата из-за ${shortUrl}`);
       });
 
     }
     bot.getDMChannel(userID).then((DMInfo) => {
-      bot.createMessage(DMInfo.id, "The bug you reported has been approved! Thanks for your report! You can find your bug in <#" + postChannelID + "> <" + shortUrl + ">").catch(() => {
-        bot.createMessage(config.channels.modLogChannel, ":warning: Can not DM **" + utils.cleanUserTag(userTag) + "**. Report **#" + key + "** approved. <" + shortUrl + ">");
+      bot.createMessage(DMInfo.id, "Ошибка, о которой вы сообщили, была одобрена! Спасибо за ваш отчет! Вы можете найти свою ошибку в <#" + postChannelID + "> <" + shortUrl + ">").catch(() => {
+        bot.createMessage(config.channels.modLogChannel, ":warning: Не могу написать в Личку **" + utils.cleanUserTag(userTag) + "**. Доклад **#" + key + "** одобрен. <" + shortUrl + ">");
       });
     }).catch((err) => {
       console.log("trelloUtils getUserInfo DM\n" + err);
@@ -109,7 +107,7 @@ function getUserInfo(userID, userTag, postChannelID, shortUrl, key, bot) {
       getUserInfo(userID, userTag, postChannelID, shortUrl, key);
     }, 2000);
   } else {
-    bot.createMessage(config.channels.modLogChannel, ":warning: Couldn't fetch user info on " + utils.cleanUserTag(userTag) + ", user might need a new role!");
+    bot.createMessage(config.channels.modLogChannel, ":warning: Не удалось получить сведения о пользователе " + utils.cleanUserTag(userTag) + ", пользователю может потребоваться новая роль!");
     loopGetUserInfo = 0;
   }
 }
@@ -119,8 +117,8 @@ function editTrelloReport(bot, trello, userTag, userID, key, editSection, newCon
     //edit card title (name)
 
     var cardUpdated = function(error, data){
-      utils.botReply(bot, userID, channelID, ", `" + utils.toTitleCase(editSection) + "` has been updated to `" + newContent + "`", command, msgID, false);
-      bot.createMessage(config.channels.modLogChannel, ":pencil2: **" + utils.cleanUserTag(userTag) + "** edited `" + utils.toTitleCase(editSection) + "` to `" + newContent + "` <" + data.shortUrl + ">");
+      utils.botReply(bot, userID, channelID, ", `" + utils.toTitleCase(editSection) + "` был обновлен до `" + newContent + "`", command, msgID, false);
+      bot.createMessage(config.channels.modLogChannel, ":pencil2: **" + utils.cleanUserTag(userTag) + "** отредактировал `" + utils.toTitleCase(editSection) + "` to `" + newContent + "` <" + data.shortUrl + ">");
     }
     var updateCard = {
       value: newContent
@@ -145,14 +143,14 @@ function editTrelloReport(bot, trello, userTag, userID, key, editSection, newCon
       let time = new Date();
       let ptime= dateFormat(time, "GMT:mm-dd-yyyy-HH-MM");
       console.log(`${ptime} trello Desc\n${userTag} ${trelloDesc}`);
-      return utils.botReply(bot, userID, channelID, "Something went wrong, please try again! Also scream at Logiz", command, msgID, false);
+      return utils.botReply(bot, userID, channelID, "Что-то пошло не так, пожалуйста, попробуйте еще раз! Также позовите Jengas", command, msgID, false);
     }
 
     let editTrelloString = trelloDesc.replace(newRegex, utils.toTitleCase(editSection) + ":\n" + newContent);
 
     var cardUpdated = function(error, data){
-      utils.botReply(bot, userID, channelID, " `" + utils.toTitleCase(editSection) + "` has been updated", command, msgID, false);
-      bot.createMessage(config.channels.modLogChannel, ":pencil2: **" + utils.cleanUserTag(userTag) + "** edited `" + utils.toTitleCase(editSection) + "` to `" + newContent + "` <" + data.shortUrl + ">");
+      utils.botReply(bot, userID, channelID, " `" + utils.toTitleCase(editSection) + "` была обновлена", command, msgID, false);
+      bot.createMessage(config.channels.modLogChannel, ":pencil2: **" + utils.cleanUserTag(userTag) + "** отредактировал `" + utils.toTitleCase(editSection) + "`до `" + newContent + "` <" + data.shortUrl + ">");
     }
 
     var updateCard = {
