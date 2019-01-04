@@ -7,10 +7,6 @@ const utils = require("../src/utils");
 function checkSectionsExist(userID, report, channelID, sectionNames, db) {
   let promise = new Promise((resolve, reject) => {
 
-    console.log(resolve);
-    console.log(reject);
-    
-
     if (!sectionNames.has('steps to reproduce')) {
       reject("необходимо включить `Steps to Reproduce: - шаг один - шаг два - шаг три (и т. д.)`");
     }
@@ -24,11 +20,9 @@ function checkSectionsExist(userID, report, channelID, sectionNames, db) {
     } else {
       resolve('')
     }
-    console.log('a');
     
 
   });
-  console.log(promise);
   
   return promise;
 }
@@ -48,8 +42,6 @@ let submitCommand = {
 
     switch (command.toLowerCase()) {
       case "!submit":
-
-        console.log('ok1');
       
 
         let splitter = msg.content.match(/\|/g);
@@ -68,8 +60,6 @@ let submitCommand = {
           return;
         }
 
-        console.log('ok2');
-
         let reportCapLinks = report.replace(/([(http(s)?):\/\/(www\.)?a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&\/=]*))/gi, "<$1>");
 
         const regPattern = /\b(steps to reproduce|expected result|actual result)s?:?/gi;
@@ -82,11 +72,8 @@ let submitCommand = {
 
         reportCapLinks = utils.cleanText(reportCapLinks, false);
 
-        console.log('ok3');
-
 
         checkSectionsExist(userID, reportCapLinks, channelID, sectionNames, db).then(() => {
-          console.log(1);
           
           let newReportString = reportCapLinks;
           let allSections = sections(newReportString, msg, bot);
@@ -95,14 +82,10 @@ let submitCommand = {
           stepsToRepro = stepsToRepro.replace(/(-)\s/gi, '\n$&');
           let expectedResult = allSections["expected result"];
           let actualResult = allSections["actual result"];
-          console.log('1a'+stepsToRepro);
-          console.log("2b"+expectedResult);
-          console.log("3c"+actualResult);
           
 
           let checkMissing = !stepsToRepro || !expectedResult || !actualResult;
-          console.log("4d"+checkMissing);
-          
+        
           if (checkMissing) {
             utils.botReply(bot, userID, channelID, "не забудьте заполнить все необходимые поля! Если вы боретесь с синтаксисом, возможно, попробуйте этот инструмент: <https://dabbit.typeform.com/to/mnlaDU>", command, msgID, true);
             return;
@@ -113,7 +96,6 @@ let submitCommand = {
           queueUtils.queueReport(bot, userTag, userID, channelID, db, msg, newReportString, queueReportString, header);
 
         }).catch((errorMessage) => {
-          console.log(errorMessage);
           
           utils.botReply(bot, userID, channelID, errorMessage, command, msgID, true);
         });
