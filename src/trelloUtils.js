@@ -7,6 +7,7 @@ const attachUtils = require('./attachUtils');
 const dateFormat = require('dateformat');
 
 function addReportTrello(bot, key, db, trello) { // add report to trello
+  
   db.serialize(function(){
     db.get('SELECT header, reportString, userID, userTag, cardID, reportMsgID FROM reports WHERE id = ?', [key], function(error, report) {
 
@@ -18,9 +19,10 @@ function addReportTrello(bot, key, db, trello) { // add report to trello
       let actualResult = allSections["actual result"];
 
       const reportString = '\n\n####Шаги для повторения:' + stepsToRepro + '\n\n####Ожидаемый релузьтат:\n' + expectedResult + '\n####Реальный результат:\n' + actualResult;
-      const reportChatString = "\n**Short description:** " + report.header + "\n**Шаги для повторения:** " + stepsToRepro + "\n**Ожидаемый релузьтат:** " + expectedResult + "\n**Реальный результат:** " + actualResult;
+      const reportChatString = "\n**Короткое описание:** " + report.header + "\n**Шаги для повторения:** " + stepsToRepro + "\n**Ожидаемый релузьтат:** " + expectedResult + "\n**Реальный результат:** " + actualResult;
 
       let success = function(successError, data) {
+        
         bot.deleteMessage(config.channels.queueChannel, report.reportMsgID).catch(() => {});
         let postChannelID;
         switch (report.cardID) {
@@ -37,7 +39,7 @@ function addReportTrello(bot, key, db, trello) { // add report to trello
             postChannelID = config.channels.linuxChannel;
             break;
         }
-        bot.createMessage(postChannelID, "───────────────────────\nReported By **" + utils.cleanUserTag(report.userTag) + "**" + reportChatString + "\n<" + data.shortUrl + "> - **#" + key + "**\n\n**Reproducibility:**\n").then((msgInfo) => {
+        bot.createMessage(postChannelID, "───────────────────────\nРепорт от **" + utils.cleanUserTag(report.userTag) + "**" + reportChatString + "\n<" + data.shortUrl + "> - **#" + key + "**\n\n**Reproducibility:**\n").then((msgInfo) => {
           // change reportStatus, trelloURL & queueMsgID
           // attach all attachments to the trello post
           let trelloURL = data.shortUrl.match(/(?:(?:<)?(?:https?:\/\/)?(?:www\.)?trello.com\/c\/)?([^\/|\s|\>]+)(?:\/|\>)?(?:[\w-\d]*)?(?:\/|\>|\/>)?/i);
