@@ -18,7 +18,7 @@ function addReportTrello(bot, key, db, trello) { // add report to trello
       let expectedResult = allSections["expected result"];
       let actualResult = allSections["actual result"];
 
-      const reportString = '\n\n####Шаги для повторения:' + stepsToRepro + '\n\n####Ожидаемый релузьтат:\n' + expectedResult + '\n####Реальный результат:\n' + actualResult;
+      const reportString = '\n\n####Шаги для повторения:' + stepsToRepro + '\n\n####Ожидаемый результат:\n' + expectedResult + '\n####Реальный результат:\n' + actualResult;
       const reportChatString = "\n**Короткое описание:** " + report.header + "\n**Шаги для повторения:** " + stepsToRepro + "\n**Ожидаемый релузьтат:** " + expectedResult + "\n**Реальный результат:** " + actualResult;
 
       let success = function(successError, data) {
